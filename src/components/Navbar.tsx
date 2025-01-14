@@ -2,7 +2,7 @@ import { BookOpen, GraduationCap, Home, Layout, User, Users } from 'lucide-react
 import { Link } from '@tanstack/react-router';
 
 const navItems = [
-  { name: 'Dashboard', icon: Home, path: '/' },
+  { name: 'Dashboard', icon: Home, path: '/dashboard' },
   { name: 'Thesis Papers', icon: BookOpen, path: '/thesis' },
   { name: 'Academic Projects', icon: Layout, path: '/projects' },
   { name: 'Supervisor Information', icon: Users, path: '/supervisors' },

@@ -1,4 +1,5 @@
 import { Router, RouterProvider, Route, RootRoute, Outlet } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router'; // or 'react-router-dom'
 import { Navbar } from './components/Navbar';
 import { Dashboard } from './pages/Dashboard';
 import { ThesisPapers } from './pages/ThesisPapers';
@@ -9,16 +10,38 @@ import Login from './pages/Login';
 
 
 // Create the root route
-const rootRoute = new RootRoute({
-  component: () => (
+// const rootRoute = new RootRoute({
+//   component: () => (
+//     <div className="min-h-screen bg-gray-50">
+//       <Navbar />
+//       <main>
+//         <Outlet />
+//       </main>
+//     </div>
+//   ),
+// });
+
+const Root = () => {
+  const location = useLocation();
+
+  // Don't show the Navbar on the login page
+  const showNavbar = location.pathname !== '/';
+
+  return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      {showNavbar && <Navbar />} {/* Conditionally render Navbar */}
       <main>
-        <Outlet />
+        <Outlet /> {/* Renders the current page component */}
       </main>
     </div>
-  ),
+  );
+};
+
+// RootRoute definition
+const rootRoute = new RootRoute({
+  component: Root, // Use the updated Root component here
 });
+
 
 // Create individual routes
 const indexRoute = new Route({
