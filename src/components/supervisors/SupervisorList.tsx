@@ -1,49 +1,61 @@
 const mockSupervisors = [
   {
     id: 1,
+    name: "Mir. Md. Saki Kowsar",
+    designation: "Assistant Professor",
+    department: "Computer Science & Engineering",
+    email: "ashfak@cuet.ac.bd",
+    phone: "+88-0317-1492023",
+    expertise: ["Machine Learning", "Signal Processing", "Pattern Recognition"],
+    image: "public/images/saki kawser.png",
+    activeTheses: 5,
+    completedTheses: 15
+  },
+  {
+    id: 2,
     name: "Dr. Abu Hasnat Mohammad Ashfak Habib",
     designation: "Head & Professor",
     department: "Computer Science & Engineering",
     email: "ashfak@cuet.ac.bd",
     phone: "+88-0317-1492023",
     expertise: ["Machine Learning", "Signal Processing", "Pattern Recognition"],
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    image: "public/images/ashfak.png",
     activeTheses: 5,
     completedTheses: 15
   },
   {
-    id: 2,
+    id: 3,
     name: "Dr. Kaushik Deb",
     designation: "Professor",
     department: "Computer Science & Engineering",
     email: "debkaushik99@cuet.ac.bd",
     phone: "+880-1914-745508",
     expertise: ["Computer Vision", "Blockchain"],
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    image: "public/images/kaushik.png",
     activeTheses: 3,
     completedTheses: 12
   },
   {
-    id: 2,
+    id: 4,
     name: "Dr. Mohammed Moshiul Hoque",
     designation: "Professor",
     department: "Computer Science & Engineering",
     email: "moshiul_240@cuet.ac.bd",
     phone: "+880-1914-745508",
     expertise: ["Maching Learning", "NLP"],
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    image: "public/images/moshiul.png",
     activeTheses: 3,
     completedTheses: 12
   },
   {
-    id: 2,
+    id: 5,
     name: "Prof. Dr. Mohammad Shamsul Arefin",
     designation: "Professor",
     department: "Computer Science & Engineering",
     email: "sarefin@cuet.ac.bd",
     phone: "+880-1716-890204",
     expertise: ["Maching Learning", "NLP"],
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    image: "public/images/arefin.png",
     activeTheses: 3,
     completedTheses: 12
   }
