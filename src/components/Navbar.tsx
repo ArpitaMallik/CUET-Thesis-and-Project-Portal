@@ -1,5 +1,5 @@
-import { BookOpen, GraduationCap, Home, Layout, User, Users } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { BookOpen, GraduationCap, Home, Layout, User, Users, LogOut } from 'lucide-react';
+import { Link, useNavigate } from '@tanstack/react-router';
 
 const navItems = [
   { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -10,26 +10,43 @@ const navItems = [
 ];
 
 export function Navbar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Add any additional logout logic here (e.g., clearing tokens, user data)
+    console.log('Logging out...');
+    navigate({ to: '/' }); // Correct usage of `navigate` with an object
+  };
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <GraduationCap className="h-8 w-8 text-indigo-600" />
-            <span className="ml-2 text-xl font-bold text-gray-800">CUET Thesis & Projects Portal</span>
+            <span className="ml-2 text-xl font-bold text-gray-800">CUET CSE Thesis Portal</span>
           </div>
-          <div className="flex space-x-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-100"
-                activeProps={{ className: 'text-indigo-600 bg-indigo-50' }}
-              >
-                <item.icon className="h-4 w-4 mr-1" />
-                {item.name}
-              </Link>
-            ))}
+          <div className="flex items-center space-x-4">
+            <div className="flex space-x-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-100"
+                  activeProps={{ className: 'text-indigo-600 bg-indigo-50' }}
+                >
+                  <item.icon className="h-4 w-4 mr-1" />
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              Logout
+            </button>
           </div>
         </div>
       </div>

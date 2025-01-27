@@ -13,6 +13,18 @@ const mockSupervisors = [
   },
   {
     id: 2,
+    name: "Md. Al-Mamun Provath",
+    designation: "Lecturer",
+    department: "Computer Science & Engineering",
+    email: "am.provath@cuet.ac.bd",
+    phone: "+88-0317-1234452",
+    expertise: ["Machine Learning", "Signal Processing", "Pattern Recognition"],
+    image: "public/images/provat.jpg",
+    activeTheses: 5,
+    completedTheses: 15
+  },
+  {
+    id: 3,
     name: "Dr. Abu Hasnat Mohammad Ashfak Habib",
     designation: "Head & Professor",
     department: "Computer Science & Engineering",
@@ -24,7 +36,7 @@ const mockSupervisors = [
     completedTheses: 15
   },
   {
-    id: 3,
+    id: 4,
     name: "Dr. Kaushik Deb",
     designation: "Professor",
     department: "Computer Science & Engineering",
@@ -36,7 +48,7 @@ const mockSupervisors = [
     completedTheses: 12
   },
   {
-    id: 4,
+    id: 5,
     name: "Dr. Mohammed Moshiul Hoque",
     designation: "Professor",
     department: "Computer Science & Engineering",
@@ -48,7 +60,7 @@ const mockSupervisors = [
     completedTheses: 12
   },
   {
-    id: 5,
+    id: 6,
     name: "Prof. Dr. Mohammad Shamsul Arefin",
     designation: "Professor",
     department: "Computer Science & Engineering",
