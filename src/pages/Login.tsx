@@ -1,24 +1,50 @@
 import React, { useState } from 'react';
 import { GraduationCap } from 'lucide-react';
 import { useRouter } from '@tanstack/react-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../components/firebase';
+// import { db } from '../components/firebase';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 function Login() {
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-
+  // const auth = getAuth(app);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-
+    const email = `u${studentId}@student.cuet.ac.bd`;
     // Add login logic here, then navigate
-    console.log({ studentId, password, rememberMe });
-    router.navigate({ to: '/dashboard' }); // Navigate to the dashboard
-  };
+    localStorage.setItem('studentId', studentId);
+    console.log(studentId);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log({ studentId, password, rememberMe });
+      router.navigate({ to: '/dashboard'});
+      toast.success("Login successful! Redirecting...");
+    } catch (error: any) {
+      let errorMessage = "An error occurred. Please try again.";
+      console.log(error.code)
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "User not found. Please check your Student ID and password.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Incorrect password. Please try again.";
+      } else if (error.code === "auth/invalid-credential") {
+        errorMessage = "Invalid Credentials! Try again!";
+      }
+      console.log(errorMessage)
+      toast.error(errorMessage);
+      // alert(errorMessage);
+    }  };
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+       <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div className="text-center">
           <div className="flex justify-center">

@@ -15,6 +15,7 @@ export function Navbar() {
   const handleLogout = () => {
     // Add any additional logout logic here (e.g., clearing tokens, user data)
     console.log('Logging out...');
+    localStorage.removeItem('studentId');
     navigate({ to: '/' }); // Correct usage of `navigate` with an object
   };
 
