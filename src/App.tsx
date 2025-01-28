@@ -7,6 +7,7 @@ import { AcademicProjects } from './pages/AcademicProjects';
 import { SupervisorInfo } from './pages/SupervisorInfo';
 import { Profile } from './pages/Profile';
 import Login from './pages/Login';
+import { FacultyProfile } from './pages/FacultyProfile';
 
 
 // Create the root route
@@ -78,6 +79,12 @@ const profileRoute = new Route({
   component: Profile,
 });
 
+const facultyProfileRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: '/faculty-profile',
+  component: FacultyProfile,
+});
+
 // Create and export the router
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -86,6 +93,7 @@ const routeTree = rootRoute.addChildren([
   supervisorsRoute,
   profileRoute,
   dashboardRoute,
+  facultyProfileRoute,
 ]);
 
 const router = new Router({ routeTree });
