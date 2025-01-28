@@ -10,13 +10,13 @@ import { getAuth } from "firebase/auth";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 console.log("Working firebase.js")
 const firebaseConfig = {
-  apiKey: "AIzaSyCOfiVx7zPgfCDFyeXVz1HtJRtZVwU2K-c",
-  authDomain: "cuet-thesis-and-project-portal.firebaseapp.com",
-  projectId: "cuet-thesis-and-project-portal",
-  storageBucket: "cuet-thesis-and-project-portal.firebasestorage.app",
-  messagingSenderId: "52956617512",
-  appId: "1:52956617512:web:f0129755ea001207688e1d",
-  measurementId: "G-484W4X5TH3"
+  apiKey: "your-api-key",
+  authDomain: "your-auth-domain",
+  projectId: "your-project-id",
+  storageBucket: "your-bucket",
+  messagingSenderId: "your-id",
+  appId: "your-id",
+  measurementId: "your-id"
 };
 
 // Initialize Firebase
