@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { GraduationCap } from 'lucide-react';
-import { useRouter } from '@tanstack/react-router';
+
+type LoginType = 'student' | 'faculty';
 
 function Login() {
+  const [loginType, setLoginType] = useState<LoginType>('student');
   const [studentId, setStudentId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const router = useRouter();
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Add login logic here, then navigate
-    console.log({ studentId, password, rememberMe });
-    router.navigate({ to: '/dashboard' }); // Navigate to the dashboard
+    // Add login logic here
+    console.log({
+      type: loginType,
+      credentials: loginType === 'student' ? { studentId, password } : { email, password },
+      rememberMe,
+    });
   };
 
   return (
@@ -32,23 +35,67 @@ function Login() {
           </p>
         </div>
 
+        {/* Login Type Toggle */}
+        <div className="flex rounded-md shadow-sm p-1 bg-gray-100" role="group">
+          <button
+            type="button"
+            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              loginType === 'student'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setLoginType('student')}
+          >
+            Student
+          </button>
+          <button
+            type="button"
+            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              loginType === 'faculty'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => setLoginType('faculty')}
+          >
+            Faculty
+          </button>
+        </div>
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div>
-              <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
-                Student ID
-              </label>
-              <input
-                id="studentId"
-                name="studentId"
-                type="text"
-                required
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Enter your student ID"
-              />
-            </div>
+            {loginType === 'student' ? (
+              <div>
+                <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
+                  Student ID
+                </label>
+                <input
+                  id="studentId"
+                  name="studentId"
+                  type="text"
+                  required
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter your student ID"
+                />
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter your email address"
+                />
+              </div>
+            )}
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
