@@ -4,7 +4,7 @@ const mockSupervisors = [
     name: "Mir. Md. Saki Kowsar",
     designation: "Assistant Professor",
     department: "Computer Science & Engineering",
-    email: "ashfak@cuet.ac.bd",
+    email: "sakikowsar@cuet.ac.bd",
     phone: "+88-0317-1492023",
     expertise: ["Machine Learning", "Signal Processing", "Pattern Recognition"],
     image: "public/images/saki kawser.png",

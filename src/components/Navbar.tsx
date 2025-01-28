@@ -7,16 +7,17 @@ const navItems = [
   { name: 'Academic Projects', icon: Layout, path: '/projects' },
   { name: 'Supervisor Information', icon: Users, path: '/supervisors' },
   { name: 'Profile', icon: User, path: '/profile' },
+  // { name: 'Faculty', icon: User, path: '/faculty-profile' },
 ];
 
 export function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Add any additional logout logic here (e.g., clearing tokens, user data)
+  
     console.log('Logging out...');
     localStorage.removeItem('studentId');
-    navigate({ to: '/' }); // Correct usage of `navigate` with an object
+    navigate({ to: '/' }); 
   };
 
   return (
