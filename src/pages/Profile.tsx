@@ -1,7 +1,8 @@
 import { User, Mail, BookOpen, Layout, Upload, Phone, Building, GraduationCap, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getFirestore, doc, getDoc, query, collection, where, getDocs } from 'firebase/firestore';
+import {doc, addDoc, getDoc, query, collection, where, getDocs , updateDoc, increment} from 'firebase/firestore';
 import { db } from '../components/firebase';
+import axios from "axios";
 
 type UserProfile = {
   name: string;
@@ -33,6 +34,16 @@ export function Profile() {
   const [showThesisForm, setShowThesisForm] = useState(false);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [studentId, setStudentId] = useState('');
+  const [file, setfile] = useState<File | null>(null);
+  const [uploadLink, setUploadLink] = useState('');
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [supervisor, setSupervisor] = useState('');
+  const [publishingYear, setPublishingYear] = useState('');
+  const [topic, setTopic] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [ThesisID, setThesisID] = useState('');
+  
 
   useEffect(() => {
     const studentId = localStorage.getItem('studentId');
@@ -107,6 +118,67 @@ export function Profile() {
       fetchProfile();
     }
   }, [studentId]);
+
+  const handleThesisSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log('submitted');
+    // Add the functionality you need for the thesis form submission here
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setfile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return alert("Please select a file");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await axios.post("http://localhost:5000/upload", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (response.data.link) {
+            console.log(response.data.link); // Set the Google Drive viewable link
+            await addDoc(collection(db, "PendingThesisPaper"), {
+                ThesisID: ThesisID,
+                studentId: studentId,
+                title: title,
+                authors: author,
+                supervisor: supervisor,
+                publishingYear: publishingYear,
+                topic: topic,
+                keywords: keywords,
+                pdfLink: response.data.link,
+            });
+            console.log('Thesis Submitted')
+            setShowThesisForm(false);
+        } else {
+            console.error("Upload successful, but no link returned:", response.data);
+        }
+    } catch (error) {
+        console.error("Upload failed:", error);
+    }
+    // try {
+    //   const dashboardDocRef = doc(db, 'Dashboard', 'Original'); // Replace 'yourDocumentId' with the actual document ID
+    //   await updateDoc(dashboardDocRef, {
+    //     'Total Theses': increment(1)
+    //   });
+    // } catch (error) {
+    //   console.error('Error updating total theses:', error);
+    // }
+};
+
+
+  const handleProjectSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle project submission
+    console.log('Project submitted');
+    setShowProjectForm(false);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -233,30 +305,180 @@ export function Profile() {
       </div>
 
       {/* Thesis Upload Modal */}
-      {showThesisForm && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={() => setShowThesisForm(false)}>
-              <X className="h-4 w-4" />
-            </button>
-            <h2 className="text-xl font-semibold">Upload Thesis</h2>
-            {/* Thesis upload form here */}
-          </div>
+        {showThesisForm && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-hidden">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full relative overflow-y-auto max-h-screen">
+        <button
+          onClick={() => setShowThesisForm(false)}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
+          <X className="h-5 w-5" />
+        </button>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">Upload Thesis</h3>
         </div>
-      )}
+        <form onSubmit={handleThesisSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">ThesisID</label>
+            <input type="text" className="input" onChange={(e) => setThesisID(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <input type="text" className="input" onChange={(e) => setTitle(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+            <input type="text" className="input" required onChange={(e)=> setAuthor(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Supervisor</label>
+            <input type="text" className="input" required onChange={(e)=> setSupervisor(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Publishing Year</label>
+            <input type="number" className="input" required min="2000" max="2025" onChange={(e)=> setPublishingYear(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+            <input type="text" className="input" required onChange={(e)=> setTopic(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Keywords (comma separated)</label>
+            <input
+              type="text"
+              className="input"
+              required
+              placeholder="e.g., AI, Machine Learning, Computer Vision"
+              onChange={(e)=> setKeywords(e.target.value)}
+            />
+          </div>
+          <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Thesis File</label>
+                <input type="file" onChange={handleFileChange} className="input" required accept=".pdf,.doc,.docx" />
+              </div>
+              <button type="button" onClick={handleUpload} className="btn btn-primary w-full">
+            Upload Thesis
+          </button>
+        </form>
+      </div>
+    </div>
+  )}
 
       {/* Project Upload Modal */}
+      {/* Project Upload Modal */}
       {showProjectForm && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={() => setShowProjectForm(false)}>
-              <X className="h-4 w-4" />
-            </button>
-            <h2 className="text-xl font-semibold">Upload Project</h2>
-            {/* Project upload form here */}
-          </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg p-6 max-w-md w-full overflow-y-auto max-h-[90vh]">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-lg font-semibold">Upload Project</h3>
+        <button
+          onClick={() => setShowProjectForm(false)}
+          className="text-gray-500 hover:text-gray-700"
+          aria-label="Close form"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+      <form onSubmit={handleProjectSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-title">
+            Title
+          </label>
+          <input
+            id="project-title"
+            type="text"
+            className="input"
+            required
+            autoFocus
+          />
         </div>
-      )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="team-members">
+            Team Members (comma separated)
+          </label>
+          <input
+            id="team-members"
+            type="text"
+            className="input"
+            required
+            
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="course-name">
+            Course Name
+          </label>
+          <input
+            id="course-name"
+            type="text"
+            className="input"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="course-teacher">
+            Course Teacher
+          </label>
+          <input
+            id="course-teacher"
+            type="text"
+            className="input"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="publishing-year">
+            Publishing Year
+          </label>
+          <input
+            id="publishing-year"
+            type="number"
+            className="input"
+            required
+            min="2000"
+            max="2024"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="topic">
+            Topic
+          </label>
+          <input
+            id="topic"
+            type="text"
+            className="input"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="keywords">
+            Keywords (comma separated)
+          </label>
+          <input
+            id="keywords"
+            type="text"
+            className="input"
+            required
+            placeholder="e.g., Web Development, React, Node.js"
+          />
+        </div>
+        <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">GitHub Repository Link</label>
+                <input type="url" className="input" required placeholder="https://github.com/username/repository" />
+              </div>
+        <button type="submit" className="btn btn-primary w-full">
+          Upload Project
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
+
 }
+  function setFile(arg0: any) {
+    throw new Error('Function not implemented.');
+  }
+

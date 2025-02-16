@@ -24,11 +24,13 @@ function Login() {
     const loginEmail = loginType === 'student' ? `u${studentId}@student.cuet.ac.bd` : email;
     try {
       await signInWithEmailAndPassword(auth, loginEmail, password);
-      localStorage.setItem('studentId', studentId);
       console.log({ studentId, loginEmail, password, rememberMe });
       if (loginType === 'student') {
+        localStorage.setItem('studentId', studentId);
         router.navigate({ to: '/dashboard', search: { studentId } }); // Navigate to the dashboard
       } else {
+        console.log('Faculty login entered');
+        localStorage.setItem('email', email);
         router.navigate({ to: '/faculty-profile', search: { email } }); // Navigate to the FacultyProfile
       }
     } catch (error) {

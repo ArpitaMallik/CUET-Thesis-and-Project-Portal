@@ -1,37 +1,26 @@
 import { Router, RouterProvider, Route, RootRoute, Outlet } from '@tanstack/react-router';
 import { useLocation } from '@tanstack/react-router'; // or 'react-router-dom'
 import { Navbar } from './components/Navbar';
+import { FacultyNavbar } from './components/FacultyNavbar'; // Import FacultyNavbar
 import { Dashboard } from './pages/Dashboard';
 import { ThesisPapers } from './pages/ThesisPapers';
 import { AcademicProjects } from './pages/AcademicProjects';
 import { SupervisorInfo } from './pages/SupervisorInfo';
 import { Profile } from './pages/Profile';
-import Login from './pages/Login';
 import { FacultyProfile } from './pages/FacultyProfile';
-
-
-
-// Create the root route
-// const rootRoute = new RootRoute({
-//   component: () => (
-//     <div className="min-h-screen bg-gray-50">
-//       <Navbar />
-//       <main>
-//         <Outlet />
-//       </main>
-//     </div>
-//   ),
-// });
+import Login from './pages/Login';
 
 const Root = () => {
   const location = useLocation();
 
-  // Don't show the Navbar on the login page
+  // Determine which navbar to show based on the current path
   const showNavbar = location.pathname !== '/';
+  const showFacultyNavbar = location.pathname === '/faculty-profile';
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {showNavbar && <Navbar />} {/* Conditionally render Navbar */}
+      {showNavbar && !showFacultyNavbar && <Navbar />} {/* Conditionally render Navbar */}
+      {showFacultyNavbar && <FacultyNavbar />} {/* Conditionally render FacultyNavbar */}
       <main>
         <Outlet /> {/* Renders the current page component */}
       </main>
@@ -43,7 +32,6 @@ const Root = () => {
 const rootRoute = new RootRoute({
   component: Root, // Use the updated Root component here
 });
-
 
 // Create individual routes
 const indexRoute = new Route({

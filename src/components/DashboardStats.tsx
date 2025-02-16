@@ -1,13 +1,9 @@
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { BookOpen, GraduationCap, Users } from 'lucide-react';
-
-const topicData = [
-  { name: 'Machine Learning', count: 15 },
-  { name: 'Computer Vision', count: 12 },
-  { name: 'Network Security', count: 8 },
-  { name: 'Cloud Computing', count: 10 },
-  { name: 'IoT', count: 6 },
-];
+import { db } from '../components/firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { ClipLoader } from 'react-spinners';
 
 const supervisionData = [
   { name: 'Mir. Md. Saki Kowsar', theses: 12 },
@@ -18,17 +14,76 @@ const supervisionData = [
   { name: 'Dr. Mohammed Moshiul Hoque', theses: 5 },
 ];
 
-const expertiseData = [
-  { name: 'Machine Learning', value: 8 },
-  { name: 'Network Security', value: 6 },
-  { name: 'Computer Vision', value: 4 },
-  { name: 'Blockchain', value: 3 },
-  { name: 'IoT', value: 3 },
-];
-
 const COLORS = ['#4f46e5', '#059669', '#0891b2', '#7c3aed', '#db2777'];
 
 export function DashboardStats() {
+  const [totalTheses, setTotalTheses] = useState(0);
+  const [activeProjects, setActiveProjects] = useState(0);
+  const [supervisors, setSupervisors] = useState(0);
+  const [topicData, setTopicData] = useState<{ name: string; count: number }[]>([]);
+  const [supervisionData, setSupervisionData] = useState<{ name: string; theses: number }[]>([]);
+  const [expertiseData, setExpertiseData] = useState<{ name: string; value: number }[]>([]);
+  // const [expertiseData, setExpertiseData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'Dashboard'));
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          setTotalTheses(data['Total Theses'] || 0);
+          setActiveProjects(data['Active Projects'] || 0);
+          setSupervisors(data['Supervisors'] || 0);
+        });
+
+        const topicDoc = await getDoc(doc(db, 'PopularTopic', 'Original'));
+        if (topicDoc.exists()) {
+          const topics = topicDoc.data();
+          const sortedTopics = Object.entries(topics)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+          setTopicData(sortedTopics);
+        }
+
+        const supDoc = await getDoc(doc(db, 'SupervisorDistribution', 'Original'));
+        if (supDoc.exists()) {
+          const supData = supDoc.data();
+          const sortedSupData = Object.entries(supData)
+            .map(([name, theses]) => ({ name, theses }))
+            .sort((a, b) => b.theses - a.theses)
+            .slice(0, 5);
+          setSupervisionData(sortedSupData);
+        }
+
+        const expDoc = await getDoc(doc(db, 'Expertise', 'Original'));
+        if (expDoc.exists()) {
+          const expData = expDoc.data();
+          const sortedExpData = Object.entries(expData)
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 5);
+          setExpertiseData(sortedExpData);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader size={50} color="#4f46e5" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -37,21 +92,21 @@ export function DashboardStats() {
             <BookOpen className="h-6 w-6 text-indigo-600" />
             <h3 className="text-lg font-semibold">Total Theses</h3>
           </div>
-          <p className="text-3xl font-bold text-indigo-700">156</p>
+          <p className="text-3xl font-bold text-indigo-700">{totalTheses}</p>
         </div>
         <div className="bg-emerald-50 border border-emerald-100 text-emerald-900 p-6 rounded-lg shadow-sm">
           <div className="flex items-center gap-3 mb-2">
             <GraduationCap className="h-6 w-6 text-emerald-600" />
             <h3 className="text-lg font-semibold">Active Projects</h3>
           </div>
-          <p className="text-3xl font-bold text-emerald-700">42</p>
+          <p className="text-3xl font-bold text-emerald-700">{activeProjects}</p>
         </div>
         <div className="bg-amber-50 border border-amber-100 text-amber-900 p-6 rounded-lg shadow-sm">
           <div className="flex items-center gap-3 mb-2">
             <Users className="h-6 w-6 text-amber-600" />
             <h3 className="text-lg font-semibold">Supervisors</h3>
           </div>
-          <p className="text-3xl font-bold text-amber-700">24</p>
+          <p className="text-3xl font-bold text-amber-700">{supervisors}</p>
         </div>
       </div>
 
@@ -148,11 +203,11 @@ export function DashboardStats() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total Theses</span>
-              <span className="font-semibold">156</span>
+              <span className="font-semibold">{totalTheses}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Active Supervisors</span>
-              <span className="font-semibold">24</span>
+              <span className="font-semibold">{supervisors}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Pending Reviews</span>

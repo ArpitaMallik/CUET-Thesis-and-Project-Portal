@@ -1,0 +1,78 @@
+[33mcommit 74bd0c9f992f5348a1bf65e19cedf6d8bb7daa49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Sun Feb 16 16:55:57 2025 +0600
+
+    Backend Updated
+
+[33mcommit c9abf2788276baa53f14163b1dbff52fb0868b7c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Wed Jan 29 01:07:45 2025 +0600
+
+    Updated
+
+[33mcommit 7923d74e5f5a4f364f7dc2d15a72cba22d16b679[m
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Wed Jan 29 01:06:57 2025 +0600
+
+    gitignore updated
+
+[33mcommit 00fc969d4e525fef96d6a48d025669913fbd717c[m
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Wed Jan 29 00:49:22 2025 +0600
+
+    gitignore updated
+
+[33mcommit 999def608876cd632eba0e9ee2a9674a3293ba8c[m
+Merge: c18b929 0a1106c
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Wed Jan 29 00:45:39 2025 +0600
+
+    Backend Initiated
+
+[33mcommit c18b9293b9489f905805134e30d585161ce064f9[m
+Author: Ratnajit Dhar <rdpratnajit@gmail.com>
+Date:   Wed Jan 29 00:25:55 2025 +0600
+
+    Backend Initiated
+
+[33mcommit 0a1106c5d84520b5b746db9025a8a192bdd0484f[m
+Author: Faozia Fariha <faoziafariha058@gmail.com>
+Date:   Wed Jan 29 00:05:28 2025 +0600
+
+    Update Login Page
+
+[33mcommit 07836cc1766ec2ff6c69357fc805e56cbc6d8803[m
+Author: Arpita Mallik <arpitamallik13@gmail.com>
+Date:   Tue Jan 28 23:42:56 2025 +0600
+
+    Create faculty page
+
+[33mcommit 9860adc2a296633e5b0d2b07d9fb43727b33c975[m
+Author: Arpita Mallik <arpitamallik13@gmail.com>
+Date:   Tue Jan 28 00:54:44 2025 +0600
+
+    update navbar and profile page
+
+[33mcommit ddce3c79e36f55c134aef726d51acafefea1c390[m
+Author: Arpita Mallik <arpitamallik13@gmail.com>
+Date:   Wed Jan 15 14:47:46 2025 +0600
+
+    Updated
+
+[33mcommit e654e10389194d316f2808ced0bf2320bba9b39e[m
+Author: Arpita Mallik <arpitamallik13@gmail.com>
+Date:   Wed Jan 15 03:09:07 2025 +0600
+
+    updated login page
+
+[33mcommit cd218a0f3c391f4b2fb45280381166b96633e171[m
+Author: Faozia Fariha <faoziafariha058@gmail.com>
+Date:   Wed Jan 15 01:45:13 2025 +0600
+
+    uploading profile, supervisors and thesis pages
+
+[33mcommit ed078e67fd675cb003434069f040f2779d73572e[m
+Author: Arpita Mallik <arpitamallik13@gmail.com>
+Date:   Wed Jan 15 01:01:33 2025 +0600
+
+    Upload Login, Dashboard and Projects Page

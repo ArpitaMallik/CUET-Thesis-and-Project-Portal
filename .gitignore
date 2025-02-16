@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 src/components/firebase.tsx
-
+C:/Users/Asus/Desktop/CUET-Thesis-and-Project-Portal/boxwood-tree-450118-s5-864f3ad2c646.json
+C:/Users/Asus/Desktop/CUET-Thesis-and-Project-Portal/src/service.json
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
