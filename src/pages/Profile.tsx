@@ -26,7 +26,7 @@ type Thesis = {
 
 type Project = {
   title: string;
-  course: string;
+  courseName: string;
   status: string;
 };
 
@@ -43,7 +43,15 @@ export function Profile() {
   const [topic, setTopic] = useState('');
   const [keywords, setKeywords] = useState('');
   const [ThesisID, setThesisID] = useState('');
-  
+  const [projectID, setProjectID] = useState('');
+  const [projectTitle, setProjectTitle] = useState('');
+  const [teamMembers, setTeamMembers] = useState('');
+  const [courseName, setCourseName] = useState('');
+  const [courseTeacher, setCourseTeacher] = useState('');
+  const [publishingYearProject, setPublishingYearProject] = useState('');
+  const [topicProject, setTopicProject] = useState('');
+  const [keywordsProject, setKeywordsProject] = useState('');
+  const [githubLink, setGithubLink] = useState('');
 
   useEffect(() => {
     const studentId = localStorage.getItem('studentId');
@@ -81,13 +89,15 @@ export function Profile() {
           const profileData = studentDoc.data();
           
           // Fetch thesis data
-          const thesisCollectionRef = collection(studentDoc.ref, "thesis");
-          const thesisSnapshot = await getDocs(thesisCollectionRef);
+          const thesisCollectionRef = collection(db, "Thesis Paper");
+          const thesisQuery = query(thesisCollectionRef, where("studentId", "==", studentId));
+          const thesisSnapshot = await getDocs(thesisQuery);
           const thesisData = thesisSnapshot.docs.map(doc => doc.data()) as Thesis[];
-
+          console.log(thesisData);
           // Fetch projects data
-          const projectCollectionRef = collection(studentDoc.ref, "project");
-          const projectSnapshot = await getDocs(projectCollectionRef);
+          const projectCollectionRef = collection(db, "Projects");
+          const projectQuery = query(projectCollectionRef, where("studentId", "==", studentId));
+          const projectSnapshot = await getDocs(projectQuery);
           const projectData = projectSnapshot.docs.map(doc => doc.data()) as Project[];
 
           // Set the user data with thesis and projects
@@ -117,6 +127,7 @@ export function Profile() {
     if (studentId) {
       fetchProfile();
     }
+
   }, [studentId]);
 
   const handleThesisSubmit = (event: React.FormEvent) => {
@@ -153,6 +164,8 @@ export function Profile() {
                 topic: topic,
                 keywords: keywords,
                 pdfLink: response.data.link,
+                helpful: 0,
+                notHelpful: 0,
             });
             console.log('Thesis Submitted')
             setShowThesisForm(false);
@@ -173,14 +186,42 @@ export function Profile() {
 };
 
 
-  const handleProjectSubmit = (e: React.FormEvent) => {
+  const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle project submission
+    try {
+      // const projectDocRef = collection(doc(db, 'PendingProjects'));
+      await addDoc(collection(db, "PendingProjects"),{
+        projectID: projectID,
+        title: projectTitle,
+        studentId: studentId,
+        teamMembers: teamMembers,
+        courseName: courseName,
+        courseTeacher: courseTeacher,
+        publishingYear: publishingYearProject,
+        topic: topicProject,
+        keywords: keywordsProject,
+        githubLink: githubLink,
+        helpful: 0,
+        notHelpful: 0,
+      });
+    } catch (error) {
+      console.error('Error submitting project:', error);
+    }
     console.log('Project submitted');
     setShowProjectForm(false);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+      </div>
+    );
+  }
+
   return (
+    
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
@@ -249,7 +290,7 @@ export function Profile() {
                       <div>
                         <p className="font-medium">{thesis.title}</p>
                         <p className="text-sm text-gray-600">Supervisor: {thesis.supervisor}</p>
-                        <p className="text-sm text-gray-600">Status: {thesis.status}</p>
+                        {/* <p className="text-sm text-gray-600">Status: {thesis.status}</p> */}
                       </div>
                     </div>
                   </div>
@@ -280,8 +321,8 @@ export function Profile() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-medium">{project.title}</p>
-                        <p className="text-sm text-gray-600">Course: {project.course}</p>
-                        <p className="text-sm text-gray-600">Status: {project.status}</p>
+                        <p className="text-sm text-gray-600">Course: {project.courseName}</p>
+                        {/* <p className="text-sm text-gray-600">Status: {project.status}</p> */}
                       </div>
                     </div>
                   </div>
@@ -381,6 +422,18 @@ export function Profile() {
       </div>
       <form onSubmit={handleProjectSubmit} className="space-y-4">
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-file">
+            Project ID
+          </label>
+          <input
+            id="project-id"
+            type="text"
+            className="input"
+            required
+            onChange={(e) => setProjectID(e.target.value)}
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-title">
             Title
           </label>
@@ -389,7 +442,7 @@ export function Profile() {
             type="text"
             className="input"
             required
-            autoFocus
+            onChange={(e)=> setProjectTitle(e.target.value)}
           />
         </div>
         <div>
@@ -401,7 +454,7 @@ export function Profile() {
             type="text"
             className="input"
             required
-            
+            onChange={(e)=> setTeamMembers(e.target.value)}
           />
         </div>
         <div>
@@ -413,6 +466,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setCourseName(e.target.value)}
           />
         </div>
         <div>
@@ -424,6 +478,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setCourseTeacher(e.target.value)}
           />
         </div>
         <div>
@@ -436,7 +491,7 @@ export function Profile() {
             className="input"
             required
             min="2000"
-            max="2024"
+            onChange={(e)=> setPublishingYearProject(e.target.value)}
           />
         </div>
         <div>
@@ -448,6 +503,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setTopicProject(e.target.value)}
           />
         </div>
         <div>
@@ -460,11 +516,12 @@ export function Profile() {
             className="input"
             required
             placeholder="e.g., Web Development, React, Node.js"
+            onChange={(e)=> setKeywordsProject(e.target.value)}
           />
         </div>
         <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">GitHub Repository Link</label>
-                <input type="url" className="input" required placeholder="https://github.com/username/repository" />
+                <input type="url" className="input" required placeholder="https://github.com/username/repository" onChange={(e)=> setGithubLink(e.target.value)}/>
               </div>
         <button type="submit" className="btn btn-primary w-full">
           Upload Project
