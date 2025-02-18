@@ -23,7 +23,7 @@ export function ThesisFilters({ setSelectedSupervisor, setSelectedYear, setSelec
       try {
         const querySnapshot = await getDocs(collection(db, "Thesis Paper"));
         const names = querySnapshot.docs.map((doc) => doc.data().supervisor); // Extracting only names
-        setSupervisorNames([...new Set(names)]);
+        setSupervisorNames([...new Set(names)].sort());
       } catch (error) {
         console.error("Error fetching supervisor names:", error);
       }
@@ -38,7 +38,7 @@ export function ThesisFilters({ setSelectedSupervisor, setSelectedYear, setSelec
         const querySnapshot = await getDocs(collection(db, "Thesis Paper"));
         const years = querySnapshot.docs.map((doc) => doc.data().publishingYear); // Extracting only years
         console.log(years);
-        setYear([...new Set(years)]);
+        setYear([...new Set(years)].sort());
       } catch (error) {
         console.error("Error fetching years:", error);
       }
@@ -53,7 +53,7 @@ export function ThesisFilters({ setSelectedSupervisor, setSelectedYear, setSelec
         const querySnapshot = await getDocs(collection(db, "Thesis Paper"));
         const topics = querySnapshot.docs.map((doc) => doc.data().topic); // Extracting only topics
         console.log(topics);
-        setTopic([...new Set(topics)]);
+        setTopic([...new Set(topics)].sort());
       } catch (error) {
         console.error("Error fetching topics:", error);
       }

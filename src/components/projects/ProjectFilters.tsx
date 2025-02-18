@@ -23,7 +23,7 @@ export function ProjectFilters( {setSelectedTeacher, setSelectedYear, setSelecte
       try {
         const querySnapshot = await getDocs(collection(db, 'Projects'));
         const names = querySnapshot.docs.map((doc) => doc.data().courseTeacher);
-        setTeacherNames([...new Set(names)]);
+        setTeacherNames([...new Set(names)].sort());
       } catch (error) {
         console.error('Error fetching teacher names:', error);
       }
@@ -36,8 +36,8 @@ export function ProjectFilters( {setSelectedTeacher, setSelectedYear, setSelecte
     const fetchYears = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'Projects'));
-        const years = querySnapshot.docs.map((doc) => doc.data().year);
-        setYear([...new Set(years)]);
+        const years = querySnapshot.docs.map((doc) => doc.data().publishingYear);
+        setYear([...new Set(years)].sort());
       } catch (error) {
         console.error('Error fetching years:', error);
       }
@@ -51,7 +51,7 @@ export function ProjectFilters( {setSelectedTeacher, setSelectedYear, setSelecte
       try {
         const querySnapshot = await getDocs(collection(db, 'Projects'));
         const courses = querySnapshot.docs.map((doc) => doc.data().courseName);
-        setCourse([...new Set(courses)]);
+        setCourse([...new Set(courses)].sort());
       } catch (error) {
         console.error('Error fetching courses:', error);
       }

@@ -6,7 +6,7 @@ import { db } from "../../components/firebase"; // Ensure correct path to fireba
 type Thesis = {
   id: string;
   title: string;
-  authors: string;
+  author: string;
   supervisor: string;
   publishingYear: number;
   topic: string;
@@ -130,7 +130,7 @@ export function ThesisList({ selectedSupervisor, selectedYear, selectedTopic }: 
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900">{thesis.title}</h3>
-                <p className="mt-1 text-sm text-gray-600">By {thesis.authors}</p>
+                <p className="mt-1 text-sm text-gray-600">By {thesis.author}</p>
                 <p className="mt-1 text-sm text-gray-600">Supervisor: {thesis.supervisor}</p>
                 <p className="mt-1 text-sm text-gray-600">
                   Year: {thesis.publishingYear} | Topic: {thesis.topic}

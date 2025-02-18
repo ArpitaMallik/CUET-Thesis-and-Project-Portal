@@ -1,6 +1,6 @@
 import { User, Mail, BookOpen, Layout, Upload, Phone, Building, GraduationCap, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import {doc, addDoc, getDoc, query, collection, where, getDocs , updateDoc, increment} from 'firebase/firestore';
+import {doc, setDoc, addDoc, getDoc, query, collection, where, getDocs , updateDoc, increment} from 'firebase/firestore';
 import { db } from '../components/firebase';
 import axios from "axios";
 
@@ -52,6 +52,7 @@ export function Profile() {
   const [topicProject, setTopicProject] = useState('');
   const [keywordsProject, setKeywordsProject] = useState('');
   const [githubLink, setGithubLink] = useState('');
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   useEffect(() => {
     const studentId = localStorage.getItem('studentId');
@@ -158,7 +159,7 @@ export function Profile() {
                 ThesisID: ThesisID,
                 studentId: studentId,
                 title: title,
-                authors: author,
+                author: author,
                 supervisor: supervisor,
                 publishingYear: publishingYear,
                 topic: topic,
@@ -210,6 +211,55 @@ export function Profile() {
     }
     console.log('Project submitted');
     setShowProjectForm(false);
+  };
+
+  const handleUpdateProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const studentQuery = query(
+        collection(db, "StudentInformation"),
+        where("studentId", "==", studentId)
+      );
+      const studentQuerySnapshot = await getDocs(studentQuery);
+  
+      if (!studentQuerySnapshot.empty) {
+        // If document exists, update it
+        const studentDoc = studentQuerySnapshot.docs[0];
+        const studentDocRef = doc(db, "StudentInformation", studentDoc.id);
+        await updateDoc(studentDocRef, {
+          studentId:studentId,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          department: user.department,
+          batch: user.batch,
+          level: user.level,
+          term: user.term,
+          section: user.section,
+        });
+        console.log("Profile updated");
+      } else {
+        // If document does not exist, create a new one with studentId as ID
+        const newStudentDocRef = doc(db, "StudentInformation", studentId);
+        await setDoc(newStudentDocRef, {
+          studentId:studentId, // Include studentId in the document
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          department: user.department,
+          batch: user.batch,
+          level: user.level,
+          term: user.term,
+          section: user.section,
+        });
+        console.log("New student profile created");
+      }
+  
+      setShowUpdateForm(false);
+    } catch (error) {
+      console.error("Error updating or creating profile:", error);
+    }
   };
 
   if (loading) {
@@ -338,12 +388,124 @@ export function Profile() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
             <div className="space-y-2">
-              <button className="btn btn-primary w-full">Update Profile</button>
+              <button className="btn btn-primary w-full" onClick={() => setShowUpdateForm(true)}>Update Profile</button>
               <button className="btn btn-secondary w-full">Change Password</button>
             </div>
           </div>
         </div>
       </div>
+
+      {showUpdateForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold">Update Profile</h3>
+              <button
+                onClick={() => setShowUpdateForm(false)}
+                className="text-gray-500 hover:text-gray-700"
+                aria-label="Close form"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateProfileSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.name}
+                  onChange={(e) => setUser({ ...user, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                <input
+                  type="studentId"
+                  className="input"
+                  value={user.studentId}
+                  onChange={(e) => setUser({ ...user, studentId: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  className="input"
+                  value={user.email}
+                  onChange={(e) => setUser({ ...user, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.phone}
+                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.department}
+                  onChange={(e) => setUser({ ...user, department: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Batch</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.batch}
+                  onChange={(e) => setUser({ ...user, batch: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.level}
+                  onChange={(e) => setUser({ ...user, level: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Term</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.term}
+                  onChange={(e) => setUser({ ...user, term: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.section}
+                  onChange={(e) => setUser({ ...user, section: e.target.value })}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-full">
+                Update Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Thesis Upload Modal */}
         {showThesisForm && (
