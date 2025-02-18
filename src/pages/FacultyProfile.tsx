@@ -217,19 +217,19 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="facultyInfo bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
                 <User className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="font-medium">{faculty.name}</p>
+                  <p className="faculty-name font-medium">{faculty.name}</p>
                   <p className="text-sm text-gray-600">{faculty.designation}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-gray-400" />
-                <p className="font-medium">{faculty.email}</p>
+                <p className="faculty-email font-medium">{faculty.email}</p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-gray-400" />
@@ -237,7 +237,7 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
               </div>
               <div className="flex items-center gap-3">
                 <Building className="h-5 w-5 text-gray-400" />
-                <p className="font-medium">{faculty.department}</p>
+                <p className="faculty-department font-medium">{faculty.department}</p>
               </div>
             </div>
             <div className="mt-4">
@@ -253,7 +253,7 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
           </div>
         {/* Pending Reviews */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Pending Reviews</h2>
+            <h2 className="pending text-xl font-semibold mb-4">Pending Reviews</h2>
             
             {/* Pending Theses */}
             <div className="mb-6">

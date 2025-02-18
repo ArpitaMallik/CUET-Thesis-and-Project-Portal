@@ -54,14 +54,14 @@ export function ProjectList() {
   return (
     <div className="flex-1 space-y-6">
       {projects.map((project) => (
-        <div key={project.id} className="bg-white p-6 rounded-lg shadow-md">
+        <div key={project.id} className="projects bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-900">{project.title}</h3>
           
           <div className="mt-4 space-y-2">
             <p className="text-sm text-gray-600">
               <span className="font-medium">Course:</span> {project.courseName}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="students text-sm text-gray-600">
               <span className="font-medium">Students:</span> {project.teamMembers}
             </p>
             <p className="text-sm text-gray-600">
@@ -80,7 +80,7 @@ export function ProjectList() {
                 {project.notHelpful}
               </button>
             </div>
-            <div className="flex gap-4">
+            <div className="github flex gap-4">
               <a
                 href={project.githubLink}
                 target="_blank"

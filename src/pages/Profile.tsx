@@ -231,32 +231,32 @@ export function Profile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="profile-info bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
                 <User className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="font-medium">{user.name}</p>
+                  <p className="profile-name font-medium">{user.name}</p>
                   <p className="text-sm text-gray-600">Student ID: {user.studentId}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="font-medium">{user.email}</p>
+                  <p className="profile-email font-medium">{user.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="font-medium">{user.phone}</p>
+                  <p className="profile-phone font-medium">{user.phone}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Building className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="font-medium">{user.department}</p>
+                  <p className="profile-department font-medium">{user.department}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

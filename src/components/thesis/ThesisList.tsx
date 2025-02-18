@@ -67,13 +67,13 @@ export function ThesisList() {
         <p>Loading...</p>
       ) : (
         theses.map((thesis) => (
-          <div key={thesis.id} className="bg-white p-6 rounded-lg shadow-md">
+          <div key={thesis.id} className="theses bg-white p-6 rounded-lg shadow-md">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900">{thesis.title}</h3>
-                <p className="mt-1 text-sm text-gray-600">By {thesis.authors}</p>
+                <p className="thesis-author mt-1 text-sm text-gray-600">By {thesis.authors}</p>
                 <p className="mt-1 text-sm text-gray-600">Supervisor: {thesis.supervisor}</p>
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="thesis-year mt-1 text-sm text-gray-600">
                   Year: {thesis.year} | Topic: {thesis.topic}
                 </p>
                 <p className="mt-1 text-sm text-gray-600">Keywords: {thesis.keywords}</p>
@@ -107,13 +107,13 @@ export function ThesisList() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="btn btn-secondary flex items-center gap-1">
+                <button className="thesis-view btn btn-secondary flex items-center gap-1">
                   <FileText className="h-4 w-4" />
                   <a href={thesis.pdfLink} target="_blank" rel="noopener noreferrer">
                     View
                   </a>
                 </button>
-                <button className="btn btn-primary flex items-center gap-1">
+                <button className="download btn btn-primary flex items-center gap-1">
                   <Download className="h-4 w-4" />
                   <a href={thesis.pdfLink} target="_blank" rel="noopener noreferrer">
                     Download

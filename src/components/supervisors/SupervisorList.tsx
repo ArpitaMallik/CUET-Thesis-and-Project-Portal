@@ -77,7 +77,7 @@ export function SupervisorList() {
   return (
     <div className="space-y-6">
       {mockSupervisors.map((supervisor) => (
-        <div key={supervisor.id} className="bg-white p-6 rounded-lg shadow-md">
+        <div key={supervisor.id} className="supervisor-info bg-white p-6 rounded-lg shadow-md">
           <div className="flex items-start gap-4">
             <img
               src={supervisor.image}
@@ -85,12 +85,12 @@ export function SupervisorList() {
               className="w-20 h-20 rounded-full object-cover"
             />
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900">{supervisor.name}</h3>
+              <h3 className="supervisor-name text-xl font-semibold text-gray-900">{supervisor.name}</h3>
               <p className="text-gray-600">{supervisor.designation}</p>
-              <p className="text-gray-600">{supervisor.department}</p>
+              <p className="supervisor-department text-gray-600">{supervisor.department}</p>
               
               <div className="mt-2 space-y-1">
-                <p className="text-sm text-gray-600">
+                <p className="supervisor-email text-sm text-gray-600">
                   <span className="font-medium">Email:</span> {supervisor.email}
                 </p>
                 <p className="text-sm text-gray-600">
