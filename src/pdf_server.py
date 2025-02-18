@@ -7,9 +7,10 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+import os
 
-# Google Drive API setup
-SERVICE_ACCOUNT_FILE = 'C://Users//Asus//Desktop//CUET-Thesis-and-Project-Portal//src//service.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the current script's directory
+SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "service.json")  
 FOLDER_ID = '1GauVn6uNGINlQaCSTF9FbaozHmnPysLR'  # Replace with your fixed Google Drive folder ID
 
 credentials = service_account.Credentials.from_service_account_file(

@@ -16,20 +16,36 @@ test.describe('CUET Thesis Portal Tests', () => {
   test('should navigate to dashboard on successful login', async ({ page }) => {
     await page.goto('http://localhost:5173');
     await page.fill('input[name="studentId"]', '2004023'); // Replace with valid credentials
-    await page.fill('input[name="password"]', '123'); // Replace with valid credentials
+    await page.fill('input[name="password"]', 'arpita'); // Replace with valid credentials
     await page.click('button:has-text("Sign in")');
 
-    // Verify the user is redirected to the dashboard
-    await expect(page).toHaveURL('http://localhost:5173/dashboard');
+    await page.waitForTimeout(3000); // Give time for navigation
+    console.log('Current URL:', await page.url()); // Debugging
+
+ 
+    await expect(page).toHaveURL(/dashboard/);
+    await expect(page.url()).toContain('/dashboard');
+
+    
+    await expect(page.locator('h1')).toHaveText('Dashboard');
   });
 
   test('should navigate to and verify all pages after login', async ({ page }) => {
     // Log in first
     await page.goto('http://localhost:5173');
     await page.fill('input[name="studentId"]', '2004023'); // Replace with valid credentials
-    await page.fill('input[name="password"]', '123'); // Replace with valid credentials
+    await page.fill('input[name="password"]', 'arpita'); // Replace with valid credentials
     await page.click('button:has-text("Sign in")');
-    await expect(page).toHaveURL('http://localhost:5173/dashboard');
+
+    await page.waitForTimeout(3000); // Give time for navigation
+    console.log('Current URL:', await page.url()); // Debugging
+
+   
+    await expect(page).toHaveURL(/dashboard/);
+    await expect(page.url()).toContain('/dashboard');
+
+   
+    await expect(page.locator('h1')).toHaveText('Dashboard');
 
     // List of pages to test after login
     const pagesToTest: { url: string; title: string }[] = [
