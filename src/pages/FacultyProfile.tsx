@@ -17,7 +17,7 @@ type UserProfile = {
 
 export function FacultyProfile() {
   const [email, setEmail] = useState('');
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const email = localStorage.getItem('email');
     if (email) {
@@ -99,7 +99,7 @@ export function FacultyProfile() {
   useEffect(() => {
     const fetchPendingProjects = async () => {
       try {
-        const projectQuery = query(collection(db, 'PendingProjects'), where('ProjectTeacher', '==', faculty.name));
+        const projectQuery = query(collection(db, 'PendingProjects'), where('courseTeacher', '==', faculty.name));
         const projectSnapshot = await getDocs(projectQuery);
         const pendingProjects = projectSnapshot.docs.map((doc) => doc.data());
         console.log('Pending projects loaded');
@@ -107,6 +107,8 @@ export function FacultyProfile() {
         // setFaculty((prev) => ({ ...prev, projects: pendingProjects }));
       } catch (error) {
         console.error('Error fetching pending projects: ', error);
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -158,7 +160,8 @@ export function FacultyProfile() {
 
 const handleProjectReview = async (id: string, project: DocumentData, action: 'accept' | 'reject') => {
     try {
-        const q = query(collection(db, "PendingProjects"), where("ProjectID", "==", id));
+        console.log(id);
+        const q = query(collection(db, "PendingProjects"), where("projectID", "==", id));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
@@ -175,6 +178,7 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
             await updateDoc(dashboardDocRef, {
                 'Active Projects': increment(1)
             });
+            setPendingProjects((prev) => prev.filter((t) => t.projectID !== id));
             } catch (error) {
             console.error('Error updating projects:', error);
             }
@@ -193,6 +197,14 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
         console.error(`Error handling projecct ${id}:`, error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+      </div>
+    );
+  }
 
   return (
     console.log('Faculty Profile'),
@@ -251,7 +263,7 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
                   <div key={thesis.ThesisID} className="flex items-center justify-between border-b pb-4">
                     <div>
                       <p className="font-medium">{thesis.title}</p>
-                      <p className="text-sm text-gray-600">Students: {thesis.authors}</p>
+                      <p className="text-sm text-gray-600">Students: {thesis.author}</p>
                     </div>
                     <div className="flex gap-2">
                       <button
@@ -290,28 +302,28 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
               {pendingProjects.map((project) => (
                   <div key={project.projectID} className="flex items-center justify-between border-b pb-4">
                     <div>
-                      <p className="font-medium">{project.Title}</p>
-                      <p className="text-sm text-gray-600">Students: {project.MemberName}</p>
+                      <p className="font-medium">{project.title}</p>
+                      <p className="text-sm text-gray-600">Students: {project.teamMembers}</p>
                     </div>
                     <div className="flex gap-2">
                       <button
                         className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 flex items-center gap-1"
                         // onClick={() => handleView(thesis.id)}
                       >
-                        <a href={project.githubrepo} target="_blank" rel="noopener noreferrer">
+                        <a href={project.githubLink} target="_blank" rel="noopener noreferrer">
                         View
                         </a>
                       </button>
                       <button
                         className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full hover:bg-emerald-200 flex items-center gap-1"
-                        onClick={() => handleProjectReview(project.ProjectID, project, 'accept')}
+                        onClick={() => handleProjectReview(project.projectID, project, 'accept')}
                       >
                         <Check className="h-4 w-4" />
                         Accept
                       </button>
                       <button
                         className="px-3 py-1 bg-red-100 text-red-700 rounded-full hover:bg-red-200 flex items-center gap-1"
-                        onClick={() => handleProjectReview(project.ProjectID, project, 'reject')}
+                        onClick={() => handleProjectReview(project.projectID, project, 'reject')}
                       >
                         <X className="h-4 w-4" />
                         Reject

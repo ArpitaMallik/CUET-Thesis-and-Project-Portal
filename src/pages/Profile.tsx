@@ -1,6 +1,6 @@
 import { User, Mail, BookOpen, Layout, Upload, Phone, Building, GraduationCap, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import {doc, addDoc, getDoc, query, collection, where, getDocs , updateDoc, increment} from 'firebase/firestore';
+import {doc, setDoc, addDoc, getDoc, query, collection, where, getDocs , updateDoc, increment} from 'firebase/firestore';
 import { db } from '../components/firebase';
 import axios from "axios";
 
@@ -26,7 +26,7 @@ type Thesis = {
 
 type Project = {
   title: string;
-  course: string;
+  courseName: string;
   status: string;
 };
 
@@ -43,7 +43,16 @@ export function Profile() {
   const [topic, setTopic] = useState('');
   const [keywords, setKeywords] = useState('');
   const [ThesisID, setThesisID] = useState('');
-  
+  const [projectID, setProjectID] = useState('');
+  const [projectTitle, setProjectTitle] = useState('');
+  const [teamMembers, setTeamMembers] = useState('');
+  const [courseName, setCourseName] = useState('');
+  const [courseTeacher, setCourseTeacher] = useState('');
+  const [publishingYearProject, setPublishingYearProject] = useState('');
+  const [topicProject, setTopicProject] = useState('');
+  const [keywordsProject, setKeywordsProject] = useState('');
+  const [githubLink, setGithubLink] = useState('');
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
 
   useEffect(() => {
     const studentId = localStorage.getItem('studentId');
@@ -81,13 +90,15 @@ export function Profile() {
           const profileData = studentDoc.data();
           
           // Fetch thesis data
-          const thesisCollectionRef = collection(studentDoc.ref, "thesis");
-          const thesisSnapshot = await getDocs(thesisCollectionRef);
+          const thesisCollectionRef = collection(db, "Thesis Paper");
+          const thesisQuery = query(thesisCollectionRef, where("studentId", "==", studentId));
+          const thesisSnapshot = await getDocs(thesisQuery);
           const thesisData = thesisSnapshot.docs.map(doc => doc.data()) as Thesis[];
-
+          console.log(thesisData);
           // Fetch projects data
-          const projectCollectionRef = collection(studentDoc.ref, "project");
-          const projectSnapshot = await getDocs(projectCollectionRef);
+          const projectCollectionRef = collection(db, "Projects");
+          const projectQuery = query(projectCollectionRef, where("studentId", "==", studentId));
+          const projectSnapshot = await getDocs(projectQuery);
           const projectData = projectSnapshot.docs.map(doc => doc.data()) as Project[];
 
           // Set the user data with thesis and projects
@@ -117,6 +128,7 @@ export function Profile() {
     if (studentId) {
       fetchProfile();
     }
+
   }, [studentId]);
 
   const handleThesisSubmit = (event: React.FormEvent) => {
@@ -147,12 +159,14 @@ export function Profile() {
                 ThesisID: ThesisID,
                 studentId: studentId,
                 title: title,
-                authors: author,
+                author: author,
                 supervisor: supervisor,
                 publishingYear: publishingYear,
                 topic: topic,
                 keywords: keywords,
                 pdfLink: response.data.link,
+                helpful: 0,
+                notHelpful: 0,
             });
             console.log('Thesis Submitted')
             setShowThesisForm(false);
@@ -173,14 +187,91 @@ export function Profile() {
 };
 
 
-  const handleProjectSubmit = (e: React.FormEvent) => {
+  const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle project submission
+    try {
+      // const projectDocRef = collection(doc(db, 'PendingProjects'));
+      await addDoc(collection(db, "PendingProjects"),{
+        projectID: projectID,
+        title: projectTitle,
+        studentId: studentId,
+        teamMembers: teamMembers,
+        courseName: courseName,
+        courseTeacher: courseTeacher,
+        publishingYear: publishingYearProject,
+        topic: topicProject,
+        keywords: keywordsProject,
+        githubLink: githubLink,
+        helpful: 0,
+        notHelpful: 0,
+      });
+    } catch (error) {
+      console.error('Error submitting project:', error);
+    }
     console.log('Project submitted');
     setShowProjectForm(false);
   };
 
+  const handleUpdateProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const studentQuery = query(
+        collection(db, "StudentInformation"),
+        where("studentId", "==", studentId)
+      );
+      const studentQuerySnapshot = await getDocs(studentQuery);
+  
+      if (!studentQuerySnapshot.empty) {
+        // If document exists, update it
+        const studentDoc = studentQuerySnapshot.docs[0];
+        const studentDocRef = doc(db, "StudentInformation", studentDoc.id);
+        await updateDoc(studentDocRef, {
+          studentId:studentId,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          department: user.department,
+          batch: user.batch,
+          level: user.level,
+          term: user.term,
+          section: user.section,
+        });
+        console.log("Profile updated");
+      } else {
+        // If document does not exist, create a new one with studentId as ID
+        const newStudentDocRef = doc(db, "StudentInformation", studentId);
+        await setDoc(newStudentDocRef, {
+          studentId:studentId, // Include studentId in the document
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          department: user.department,
+          batch: user.batch,
+          level: user.level,
+          term: user.term,
+          section: user.section,
+        });
+        console.log("New student profile created");
+      }
+  
+      setShowUpdateForm(false);
+    } catch (error) {
+      console.error("Error updating or creating profile:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+      </div>
+    );
+  }
+
   return (
+    
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
@@ -249,7 +340,7 @@ export function Profile() {
                       <div>
                         <p className="font-medium">{thesis.title}</p>
                         <p className="text-sm text-gray-600">Supervisor: {thesis.supervisor}</p>
-                        <p className="text-sm text-gray-600">Status: {thesis.status}</p>
+                        {/* <p className="text-sm text-gray-600">Status: {thesis.status}</p> */}
                       </div>
                     </div>
                   </div>
@@ -280,8 +371,8 @@ export function Profile() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-medium">{project.title}</p>
-                        <p className="text-sm text-gray-600">Course: {project.course}</p>
-                        <p className="text-sm text-gray-600">Status: {project.status}</p>
+                        <p className="text-sm text-gray-600">Course: {project.courseName}</p>
+                        {/* <p className="text-sm text-gray-600">Status: {project.status}</p> */}
                       </div>
                     </div>
                   </div>
@@ -297,12 +388,124 @@ export function Profile() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
             <div className="space-y-2">
-              <button className="btn btn-primary w-full">Update Profile</button>
+              <button className="btn btn-primary w-full" onClick={() => setShowUpdateForm(true)}>Update Profile</button>
               <button className="btn btn-secondary w-full">Change Password</button>
             </div>
           </div>
         </div>
       </div>
+
+      {showUpdateForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full overflow-y-auto max-h-[90vh]">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold">Update Profile</h3>
+              <button
+                onClick={() => setShowUpdateForm(false)}
+                className="text-gray-500 hover:text-gray-700"
+                aria-label="Close form"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateProfileSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.name}
+                  onChange={(e) => setUser({ ...user, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                <input
+                  type="studentId"
+                  className="input"
+                  value={user.studentId}
+                  onChange={(e) => setUser({ ...user, studentId: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  className="input"
+                  value={user.email}
+                  onChange={(e) => setUser({ ...user, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.phone}
+                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.department}
+                  onChange={(e) => setUser({ ...user, department: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Batch</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.batch}
+                  onChange={(e) => setUser({ ...user, batch: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.level}
+                  onChange={(e) => setUser({ ...user, level: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Term</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.term}
+                  onChange={(e) => setUser({ ...user, term: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={user.section}
+                  onChange={(e) => setUser({ ...user, section: e.target.value })}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-full">
+                Update Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Thesis Upload Modal */}
         {showThesisForm && (
@@ -381,6 +584,18 @@ export function Profile() {
       </div>
       <form onSubmit={handleProjectSubmit} className="space-y-4">
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-file">
+            Project ID
+          </label>
+          <input
+            id="project-id"
+            type="text"
+            className="input"
+            required
+            onChange={(e) => setProjectID(e.target.value)}
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-title">
             Title
           </label>
@@ -389,7 +604,7 @@ export function Profile() {
             type="text"
             className="input"
             required
-            autoFocus
+            onChange={(e)=> setProjectTitle(e.target.value)}
           />
         </div>
         <div>
@@ -401,7 +616,7 @@ export function Profile() {
             type="text"
             className="input"
             required
-            
+            onChange={(e)=> setTeamMembers(e.target.value)}
           />
         </div>
         <div>
@@ -413,6 +628,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setCourseName(e.target.value)}
           />
         </div>
         <div>
@@ -424,6 +640,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setCourseTeacher(e.target.value)}
           />
         </div>
         <div>
@@ -436,7 +653,7 @@ export function Profile() {
             className="input"
             required
             min="2000"
-            max="2024"
+            onChange={(e)=> setPublishingYearProject(e.target.value)}
           />
         </div>
         <div>
@@ -448,6 +665,7 @@ export function Profile() {
             type="text"
             className="input"
             required
+            onChange={(e)=> setTopicProject(e.target.value)}
           />
         </div>
         <div>
@@ -460,11 +678,12 @@ export function Profile() {
             className="input"
             required
             placeholder="e.g., Web Development, React, Node.js"
+            onChange={(e)=> setKeywordsProject(e.target.value)}
           />
         </div>
         <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">GitHub Repository Link</label>
-                <input type="url" className="input" required placeholder="https://github.com/username/repository" />
+                <input type="url" className="input" required placeholder="https://github.com/username/repository" onChange={(e)=> setGithubLink(e.target.value)}/>
               </div>
         <button type="submit" className="btn btn-primary w-full">
           Upload Project
