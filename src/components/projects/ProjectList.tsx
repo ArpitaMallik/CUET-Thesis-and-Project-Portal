@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { Github, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { db } from '../firebase'; // Ensure the correct path to your firebase configuration
 
@@ -15,20 +15,42 @@ type Project = {
   notHelpful: number;
 };
 
-export function ProjectList() {
+interface ProjectListProps {
+  selectedTeacher: string;
+  selectedYear: string;
+  selectedCourse: string;
+}
+
+export function ProjectList({ selectedTeacher, selectedYear, selectedCourse} : ProjectListProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [clickedButtons, setClickedButtons] = useState<{ [key: string]: boolean }>({});
+  
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const querySnapshot = await getDocs(collection(db, 'Projects'));
-        console.log(querySnapshot.docs);
+        let q = collection(db, "Projects");
+        let queryConstraints = [];
+
+        if (selectedTeacher) {
+          queryConstraints.push(where("courseTeacher", "==", selectedTeacher))
+        }
+
+        if (selectedYear){
+          queryConstraints.push(where("publishingYear", "==", selectedYear))
+        }
+
+        if(selectedCourse){
+          queryConstraints.push(where("courseName", "==", selectedCourse))
+        }
+
+        const finalQuery = query(q, ...queryConstraints);
+        const querySnapshot = await getDocs(finalQuery);
         const projectsData: Project[] = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })) as Project[];
+        }))  as Project[];
         setProjects(projectsData);
       } catch (error) {
         console.error('Error fetching projects: ', error);
@@ -38,15 +60,47 @@ export function ProjectList() {
     };
 
     fetchProjects();
-  }, []);
+  }, [selectedTeacher, selectedCourse, selectedYear]);
 
-  <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
-  </div>
+  const handleHelpfulClick = async (projectId: string, currentHelpful: number) => {
+    const projectDocRef = doc(db, "Projects", projectId);
+    console.log(currentHelpful);
+    if (currentHelpful === undefined || Number.isNaN(currentHelpful)) {
+      currentHelpful = 0;
+    }
+  
+    await updateDoc(projectDocRef, {
+      helpful: currentHelpful + 1,
+    });
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === projectId ? { ...project, helpful: (project.helpful ?? 0) + 1 } : project
+      )
+    );
+    setClickedButtons((prev) => ({ ...prev, [projectId]: true }));
+  };
+  
+  const handleNotHelpfulClick = async (projectId: string, currentNotHelpful: number) => {
+    const projectDocRef = doc(db, "Projects", projectId);
+    if (currentNotHelpful === undefined || Number.isNaN(currentNotHelpful)) {
+      currentNotHelpful = 0;
+    }
+  
+    await updateDoc(projectDocRef, {
+      notHelpful: currentNotHelpful + 1,
+    });
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === projectId ? { ...project, notHelpful: (project.notHelpful ?? 0) + 1 } : project
+      )
+    );
+    setClickedButtons((prev) => ({ ...prev, [projectId]: true }));
+  };
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid absolute inset-0 m-auto"></div>
       </div>
     );
   }
@@ -71,14 +125,22 @@ export function ProjectList() {
 
           <div className="mt-4 flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <button className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-full hover:bg-emerald-200">
-                <ThumbsUp className="h-4 w-4" />
-                {project.helpful}
-              </button>
-              <button className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full hover:bg-red-200">
-                <ThumbsDown className="h-4 w-4" />
-                {project.notHelpful}
-              </button>
+            <button
+              onClick={() => handleHelpfulClick(project.id, project.helpful)}
+              className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-full hover:bg-emerald-200"
+              disabled={clickedButtons[project.id]}
+            >
+              <ThumbsUp className="h-4 w-4" />
+              {project.helpful}
+            </button>
+            <button
+              onClick={() => handleNotHelpfulClick(project.id, project.notHelpful)}
+              className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full hover:bg-red-200"
+              disabled={clickedButtons[project.id]}
+            >
+              <ThumbsDown className="h-4 w-4" />
+              {project.notHelpful}
+            </button>
             </div>
             <div className="flex gap-4">
               <a
