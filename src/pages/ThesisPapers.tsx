@@ -1,8 +1,24 @@
 import { Search } from 'lucide-react';
 import { ThesisList } from '../components/thesis/ThesisList';
 import { ThesisFilters } from '../components/thesis/ThesisFilters';
+import {useState} from 'react';
 
 export function ThesisPapers() {
+
+  const [selectedSupervisor, setSelectedSupervisor] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
+
+  const supervisorSelect = (supervisor: string) => {
+    setSelectedSupervisor(supervisor);
+  }
+  const yearSelect = (year: string) => {
+    setSelectedYear(year);
+  }
+  const topicSelect = (topic: string) => {
+    setSelectedTopic(topic);
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
@@ -11,19 +27,14 @@ export function ThesisPapers() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
-        <ThesisFilters />
+        <ThesisFilters 
+          setSelectedSupervisor={supervisorSelect} 
+          setSelectedYear={yearSelect} 
+          setSelectedTopic={topicSelect} 
+        />
         <div className="flex-1">
-          <div className="mb-6">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search thesis papers..."
-                className="input pl-10"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-          <ThesisList />
+          
+          <ThesisList selectedSupervisor={selectedSupervisor} selectedYear={selectedYear} selectedTopic={selectedTopic} />
         </div>
       </div>
     </div>

@@ -215,7 +215,7 @@ export function DashboardStats() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">This Month's Submissions</span>
-              <span className="font-semibold">12</span>
+              <span className="font-semibold">2</span>
             </div>
           </div>
         </div>

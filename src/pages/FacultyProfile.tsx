@@ -263,7 +263,7 @@ const handleProjectReview = async (id: string, project: DocumentData, action: 'a
                   <div key={thesis.ThesisID} className="flex items-center justify-between border-b pb-4">
                     <div>
                       <p className="font-medium">{thesis.title}</p>
-                      <p className="text-sm text-gray-600">Students: {thesis.authors}</p>
+                      <p className="text-sm text-gray-600">Students: {thesis.author}</p>
                     </div>
                     <div className="flex gap-2">
                       <button
