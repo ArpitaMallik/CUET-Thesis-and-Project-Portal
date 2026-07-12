@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cuet-thesis-api
+    runtime: python
+    rootDir: src
+    buildCommand: "pip install --upgrade pip && pip install -r ../requirements.txt"
+    startCommand: "gunicorn pdf_server:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SERVICE_ACCOUNT_FILE
+        sync: false
+    plan: free
