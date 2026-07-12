@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app)
 import os
 
-# Google Drive API setup
-SERVICE_ACCOUNT_FILE = 'src\service.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the current script's directory
+SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, os.environ.get("SERVICE_ACCOUNT_FILE", "service.json"))  
 FOLDER_ID = '1GauVn6uNGINlQaCSTF9FbaozHmnPysLR'  # Replace with your fixed Google Drive folder ID
 
 credentials = service_account.Credentials.from_service_account_file(
@@ -50,4 +50,5 @@ def upload_file():
         return jsonify({'error': f'Failed to upload file: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

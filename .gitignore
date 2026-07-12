@@ -24,3 +24,9 @@ src/service.json
 *.njsproj
 *.sln
 *.sw?
+.env
+.env.local
+test-results/
+playwright-report/
+.puku/
+
